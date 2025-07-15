@@ -1,0 +1,28 @@
+
+# Byte-compiled / cache
+__pycache__/
+*.py[cod]
+*.so
+
+# Virtual environments
+.venv/
+.env
+.env.*
+
+# Data/output
+*.csv
+*.log
+*.sqlite3
+data/
+api/data/
+
+# VSCode/PyCharm
+.vscode/
+.idea/
+
+# Poetry
+poetry.lock
+
+# OS files
+.DS_Store
+Thumbs.db
