@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: tech-challenge1-api
+    runtime: python
+    region: oregon
+    plan: free
+
+    buildCommand: |
+      pip install poetry
+      poetry config virtualenvs.create false
+      poetry install --no-dev
+
+    startCommand: uvicorn tech_challenge1.api.main:app --host 0.0.0.0 --port 10000
+
+    envVars:
+      - key: SECRET_KEY
+        value: sua_secret_key_aqui
+      - key: ALGORITHM
+        value: HS256
+      - key: ACCESS_TOKEN_EXPIRE_MINUTES
+        value: "30"
+      - key: ENVIRONMENT
+        value: production
