@@ -1,3 +1,4 @@
+import os
 import streamlit as st
 import requests
 from dotenv import load_dotenv
@@ -6,7 +7,7 @@ from tech_challenge1.core.settings import settings
 load_dotenv()
 st.set_page_config("Dashboard - Books API")
 
-API_BASE = "http://127.0.0.1:8000"
+API_BASE = os.getenv("API_BASE", "http://127.0.0.1:8000")
 LOGIN = {"username": settings.DASHBOARD_USER, "password": settings.DASHBOARD_PASSWORD}
 
 # Autenticação
