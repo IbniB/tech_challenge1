@@ -14,10 +14,12 @@ services:
 
     envVars:
       - key: SECRET_KEY
-        value: sua_secret_key_aqui
+        value: ${SECRET_KEY}
       - key: ALGORITHM
         value: HS256
       - key: ACCESS_TOKEN_EXPIRE_MINUTES
         value: "30"
+      - key: DATABASE_URL
+        value: sqlite:///./tech_challenge1.db
       - key: ENVIRONMENT
         value: production
