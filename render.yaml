@@ -8,18 +8,15 @@ services:
     buildCommand: |
       pip install poetry
       poetry config virtualenvs.create false
-      poetry install --without dev 
+      poetry install --without dev
 
-    startCommand: uvicorn tech_challenge1.api.main:app --host 0.0.0.0 --port $PORT
+    startCommand: uvicorn tech_challenge1.api.main:app --host 0.0.0.0 --port 10000
 
     envVars:
       - key: SECRET_KEY
-        sync: false
       - key: ALGORITHM
-        sync: false
       - key: ACCESS_TOKEN_EXPIRE_MINUTES
-        sync: false
       - key: DATABASE_URL
-        sync: false
       - key: ENVIRONMENT
-        sync: false
+      - key: DASHBOARD_USER
+      - key: DASHBOARD_PASSWORD
