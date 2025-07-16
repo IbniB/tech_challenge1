@@ -17,8 +17,14 @@ dependencies = [
     "passlib[bcrypt] (>=1.7.4,<2.0.0)",
     "sqlalchemy (>=2.0.41,<3.0.0)",
     "python-multipart (>=0.0.20,<0.0.21)",
-    "pydantic-settings (>=2.10.1,<3.0.0)"
+    "pydantic-settings (>=2.10.1,<3.0.0)",
+    "loguru (>=0.7.3,<0.8.0)",
+    "prometheus-fastapi-instrumentator (>=7.1.0,<8.0.0)",
+    "streamlit (>=1.46.1,<2.0.0)"
 ]
+
+[tool.poetry.dependencies]
+python = ">=3.11,<4.0"
 
 [tool.poetry]
 packages = [{ include = "tech_challenge1" }]

@@ -7,6 +7,8 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     ENVIRONMENT: str = "development"
     DATABASE_URL: str
+    DASHBOARD_USER: str
+    DASHBOARD_PASSWORD: str
 
     class Config:
         env_file = Path(__file__).resolve().parent.parent.parent / ".env"

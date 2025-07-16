@@ -4,7 +4,7 @@ import os
 from tech_challenge1.core.security import get_current_user
 from tech_challenge1.models.user import User
 
-router = APIRouter(prefix="/api/v1", tags=["Stats"])
+router = APIRouter()
 
 CSV_PATH = os.path.join(os.path.dirname(__file__), "..", "data", "livros.csv")
 
@@ -15,7 +15,7 @@ def load_df():
     df["numeric_price"] = df["price"].str.replace("£", "").astype(float)
     return df
 
-@router.get("/stats/overview")
+@router.get("/overview")
 def stats_overview(current_user: User=Depends(get_current_user)):
     df = load_df()
     total = len(df)
@@ -27,7 +27,7 @@ def stats_overview(current_user: User=Depends(get_current_user)):
         "ratings_distribution": rating_dist
     }
 
-@router.get("/stats/categories")
+@router.get("/categories")
 def stats_by_category():
     df = load_df()
     grouped = df.groupby("category").agg(
@@ -36,7 +36,7 @@ def stats_by_category():
     ).round(2).reset_index()
     return grouped.to_dict(orient="records")
 
-@router.get("/stats/top-rated")
+@router.get("/top-rated")
 def top_rated_books():
     df = load_df()
     # Rating textual para ranking
@@ -46,7 +46,7 @@ def top_rated_books():
     top_books = df[df["rating_score"] == top_rating]
     return top_books.drop(columns=["rating_score", "numeric_price"]).to_dict(orient="records")
 
-@router.get("/stats/price-range")
+@router.get("/price-range")
 def books_in_price_range(min: float = Query(0), max: float = Query(1000)):
     df = load_df()
     filtered = df[(df["numeric_price"] >= min) & (df["numeric_price"] <= max)]

@@ -6,7 +6,7 @@ from tech_challenge1.db.database import SessionLocal
 from tech_challenge1.models.user import User as DBUser
 from tech_challenge1.core.security import create_access_token, get_password_hash, verify_password
 
-auth_router = APIRouter(prefix="/api/v1/auth", tags=["Auth"])
+auth_router = APIRouter()
 
 
 def get_db():
