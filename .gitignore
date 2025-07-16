@@ -20,9 +20,6 @@ api/data/
 .vscode/
 .idea/
 
-# Poetry
-poetry.lock
-
 # OS files
 .DS_Store
 Thumbs.db
