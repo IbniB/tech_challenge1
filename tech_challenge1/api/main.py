@@ -9,8 +9,6 @@ from tech_challenge1.api.routes.logs import router as logs_router
 from tech_challenge1.utils.logging import logger
 from prometheus_fastapi_instrumentator import Instrumentator
 
-# meu Bearer: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbiIsImV4cCI6MTc1MjYzMjE1N30.QJJ2ronni7rILy-JJDSL4TfmedBHGwgiPs6Dl7khbv8
-
 app = FastAPI(
     title="Tech Challenge - API de Livros",
     version="1.0.0"
