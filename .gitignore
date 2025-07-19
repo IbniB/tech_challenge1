@@ -12,8 +12,6 @@ __pycache__/
 *.csv
 *.log
 *.sqlite3
-data/
-api/data/
 
 # VSCode/PyCharm
 .vscode/
