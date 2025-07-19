@@ -8,11 +8,6 @@ __pycache__/
 .venv/
 .env
 
-# Data/output
-*.csv
-*.log
-*.sqlite3
-
 # VSCode/PyCharm
 .vscode/
 .idea/
