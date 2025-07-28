@@ -1,0 +1,72 @@
+2025-07-19T09:15:09.716045-0300 | INFO | Requisição: POST http://127.0.0.1:8000/api/v1/auth/login
+2025-07-19T09:15:09.981082-0300 | INFO | Resposta: 200
+2025-07-19T09:15:10.218033-0300 | INFO | Requisição: GET http://127.0.0.1:8000/api/v1/ml/features
+2025-07-19T09:15:10.220598-0300 | INFO | Resposta: 200
+2025-07-19T09:15:10.227917-0300 | INFO | Requisição: GET http://127.0.0.1:8000/api/v1/metrics
+2025-07-19T09:15:10.229372-0300 | INFO | Resposta: 200
+2025-07-19T09:15:10.231886-0300 | INFO | Requisição: GET http://127.0.0.1:8000/api/v1/logs
+2025-07-19T09:15:10.231886-0300 | INFO | Resposta: 307
+2025-07-19T09:15:10.233901-0300 | INFO | Requisição: GET http://127.0.0.1:8000/api/v1/logs/
+2025-07-19T09:15:10.234918-0300 | INFO | Resposta: 200
+2025-07-19T09:18:34.410273-0300 | INFO | Requisição: GET http://127.0.0.1:8000/
+2025-07-19T09:18:34.412311-0300 | INFO | Resposta: 200
+2025-07-19T09:18:38.033441-0300 | INFO | Requisição: GET http://127.0.0.1:8000/docs
+2025-07-19T09:18:38.033441-0300 | INFO | Resposta: 200
+2025-07-19T09:18:38.303361-0300 | INFO | Requisição: GET http://127.0.0.1:8000/openapi.json
+2025-07-19T09:18:38.311531-0300 | INFO | Resposta: 200
+2025-07-19T09:18:47.888522-0300 | INFO | Requisição: GET http://127.0.0.1:8000/api/v1/books
+2025-07-19T09:18:47.897889-0300 | INFO | Resposta: 401
+2025-07-19T09:18:50.283606-0300 | INFO | Requisição: GET http://127.0.0.1:8000/api/v1/books
+2025-07-19T09:18:50.285616-0300 | INFO | Resposta: 401
+2025-07-19T09:19:08.861584-0300 | INFO | Requisição: POST http://127.0.0.1:8000/api/v1/auth/login
+2025-07-19T09:19:08.864714-0300 | INFO | Resposta: 401
+2025-07-19T09:19:12.770569-0300 | INFO | Requisição: POST http://127.0.0.1:8000/api/v1/auth/login
+2025-07-19T09:19:12.773583-0300 | INFO | Resposta: 401
+2025-07-19T09:19:13.613343-0300 | INFO | Requisição: POST http://127.0.0.1:8000/api/v1/auth/login
+2025-07-19T09:19:13.616360-0300 | INFO | Resposta: 401
+2025-07-19T09:20:00.218039-0300 | INFO | Requisição: POST http://127.0.0.1:8000/api/v1/auth/login
+2025-07-19T09:20:00.454090-0300 | INFO | Resposta: 200
+2025-07-19T09:20:12.424922-0300 | INFO | Requisição: GET http://127.0.0.1:8000/api/v1/books
+2025-07-19T09:20:12.456557-0300 | INFO | Resposta: 200
+2025-07-19T09:20:47.075278-0300 | INFO | Requisição: GET http://127.0.0.1:8000/api/v1/books/search?title=Himalayas
+2025-07-19T09:20:47.083857-0300 | INFO | Resposta: 200
+2025-07-19T09:20:54.310257-0300 | INFO | Requisição: GET http://127.0.0.1:8000/api/v1/books/search?category=Travel
+2025-07-19T09:20:54.320723-0300 | INFO | Resposta: 200
+2025-07-19T09:21:09.106792-0300 | INFO | Requisição: GET http://127.0.0.1:8000/api/v1/books/search?title=Moon
+2025-07-19T09:21:09.115330-0300 | INFO | Resposta: 200
+2025-07-19T09:21:36.038491-0300 | INFO | Requisição: GET http://127.0.0.1:8000/api/v1/books/357
+2025-07-19T09:21:36.048190-0300 | INFO | Resposta: 200
+2025-07-19T09:22:14.722751-0300 | INFO | Requisição: GET http://127.0.0.1:8000/api/v1/books/categories
+2025-07-19T09:22:14.723759-0300 | INFO | Resposta: 422
+2025-07-19T09:22:18.652783-0300 | INFO | Requisição: GET http://127.0.0.1:8000/api/v1/books/categories
+2025-07-19T09:22:18.653784-0300 | INFO | Resposta: 422
+2025-07-19T09:22:19.144684-0300 | INFO | Requisição: GET http://127.0.0.1:8000/api/v1/books/categories
+2025-07-19T09:22:19.145691-0300 | INFO | Resposta: 422
+2025-07-19T09:23:38.511242-0300 | INFO | Requisição: GET http://127.0.0.1:8000/api/v1/stats/overview
+2025-07-19T09:23:38.519754-0300 | INFO | Resposta: 200
+2025-07-19T09:23:56.109686-0300 | INFO | Requisição: GET http://127.0.0.1:8000/api/v1/stats/categories
+2025-07-19T09:23:56.119859-0300 | INFO | Resposta: 200
+2025-07-19T09:24:51.072059-0300 | INFO | Requisição: GET http://127.0.0.1:8000/api/v1/stats/top-rated
+2025-07-19T09:24:51.084015-0300 | INFO | Resposta: 200
+2025-07-19T09:25:03.841695-0300 | INFO | Requisição: GET http://127.0.0.1:8000/api/v1/stats/price-range?min=50&max=60
+2025-07-19T09:25:03.851787-0300 | INFO | Resposta: 200
+2025-07-19T09:25:14.853319-0300 | INFO | Requisição: GET http://127.0.0.1:8000/api/v1/ml/features
+2025-07-19T09:25:14.854822-0300 | INFO | Resposta: 200
+2025-07-19T09:25:25.524992-0300 | INFO | Requisição: GET http://127.0.0.1:8000/api/v1/ml/training-data
+2025-07-19T09:25:25.527161-0300 | INFO | Resposta: 200
+2025-07-19T09:26:00.873111-0300 | INFO | Requisição: POST http://127.0.0.1:8000/api/v1/ml/predictions
+2025-07-19T09:26:00.876812-0300 | INFO | Resposta: 200
+2025-07-19T09:26:14.534224-0300 | INFO | Requisição: POST http://127.0.0.1:8000/api/v1/ml/predictions
+2025-07-19T09:26:14.537244-0300 | INFO | Resposta: 200
+2025-07-19T09:26:19.725753-0300 | INFO | Requisição: POST http://127.0.0.1:8000/api/v1/ml/predictions
+2025-07-19T09:26:19.728258-0300 | INFO | Resposta: 200
+2025-07-19T09:26:48.685653-0300 | INFO | Requisição: POST http://127.0.0.1:8000/api/v1/ml/predictions
+2025-07-19T09:26:48.689429-0300 | INFO | Resposta: 200
+2025-07-19T09:26:53.445774-0300 | INFO | Requisição: POST http://127.0.0.1:8000/api/v1/ml/predictions
+2025-07-19T09:26:53.448472-0300 | INFO | Resposta: 200
+2025-07-19T09:27:01.757634-0300 | INFO | Requisição: GET http://127.0.0.1:8000/api/v1/metrics/metrics
+2025-07-19T09:27:01.760646-0300 | INFO | Resposta: 200
+2025-07-19T09:28:09.300200-0300 | INFO | Requisição: GET http://127.0.0.1:8000/api/v1/logs/
+2025-07-19T09:28:09.301441-0300 | INFO | Resposta: 200
+2025-07-19T09:28:27.956180-0300 | INFO | Requisição: GET http://127.0.0.1:8000/
+2025-07-19T09:28:27.957186-0300 | INFO | Resposta: 200

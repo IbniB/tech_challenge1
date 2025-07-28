@@ -16,6 +16,23 @@ auth = requests.post(
     data=LOGIN,
     headers={"Content-Type": "application/x-www-form-urlencoded"}
 )
+
+# DEBUG: mostre status e corpo da resposta
+st.write("🔐 Login status:", auth.status_code)
+st.write("📥 Login body  :", auth.text)
+
+# Pare aqui se deu erro
+if not auth.ok:
+    st.error("❌ Não foi possível autenticar. Verifique API_BASE, usuário/senha e endpoint.")
+    st.stop()
+
+# Agora tente extrair o token com segurança
+resp = auth.json()
+token = resp.get("access_token")
+if not token:
+    st.error(f"❌ Nenhum access_token na resposta: {resp}")
+    st.stop()
+
 token = auth.json()["access_token"]
 headers = {"Authorization": f"Bearer {token}"}
 
