@@ -3,9 +3,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.openapi.utils import get_openapi
 
 from tech_challenge1.api.routes import books, stats, ml, metrics
-from tech_challenge1.db.database import Base, engine
 from tech_challenge1.api.routes.auth import auth_router
 from tech_challenge1.api.routes.logs import router as logs_router
+from tech_challenge1.api.routes.scraping import router as scraping_router
+from tech_challenge1.db.database import Base, engine
 from tech_challenge1.utils.logging import logger
 from prometheus_fastapi_instrumentator import Instrumentator
 
@@ -38,6 +39,7 @@ app.include_router(stats.router, prefix="/api/v1/stats", tags=["Stats"])
 app.include_router(ml.router, prefix="/api/v1/ml", tags=["ML"])
 app.include_router(metrics.router, prefix="/api/v1/metrics", tags=["Metrics"])
 app.include_router(logs_router, prefix="/api/v1/logs", tags=["Logs"])
+app.include_router(scraping_router, prefix="/api/v1/scraping", tags=["Scraping"])
 
 
 

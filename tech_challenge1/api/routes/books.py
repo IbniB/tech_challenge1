@@ -26,27 +26,28 @@ def get_books(current_user: User = Depends(get_current_user)):
 @router.get("/search", response_model=list[Book])
 def search_books(
     title: Optional[str] = Query(None, description="Parte do título"),
-    category: Optional[str] = Query(None, description="Nome da categoria")
+    category: Optional[str] = Query(None, description="Nome da categoria"),
+    current_user: User      = Depends(get_current_user),
 ):
     books = load_books()
-
-    results = books
     if title:
-        results = [b for b in results if title.lower() in b["title"].lower()]
+        books = [b for b in books if title.lower() in b["title"].lower()]
     if category:
-        results = [b for b in results if category.lower() in b["category"].lower()]
-    return results
+        books = [b for b in books if category.lower() in b["category"].lower()]
+    return books
+
+@router.get("/categories", response_model=list[str])
+def get_categories(current_user: User = Depends(get_current_user)):
+    books = load_books()
+    categories = sorted(set(b["category"] for b in books))
+    return categories
 
 @router.get("/{book_id}", response_model=Book)
-def get_book_by_id(book_id: int):
+def get_book_by_id(book_id: int, current_user: User = Depends(get_current_user)):
     books = load_books()
     if book_id < 0 or book_id >= len(books):
         raise HTTPException(status_code=404, detail=f"Livro com ID {book_id} não encontrado.")
     return books[book_id]
 
 
-@router.get("/categories", response_model=list[str])
-def get_categories():
-    books = load_books()
-    categories = sorted(set(b["category"] for b in books))
-    return categories
+

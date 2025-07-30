@@ -28,7 +28,9 @@ def register(user: UserRegister, db: Session = Depends(get_db)):
     if user_exists:
         raise HTTPException(status_code=400, detail="Usuário já existe")
 
-    db_user = DBUser(username=user.username, hashed_password=get_password_hash(user.password))
+    db_user = DBUser(username=user.username,
+                     hashed_password=get_password_hash(user.password)
+                     )
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
@@ -39,7 +41,13 @@ def register(user: UserRegister, db: Session = Depends(get_db)):
 def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
     user = db.query(DBUser).filter(DBUser.username == form_data.username).first()
     if not user or not verify_password(form_data.password, user.hashed_password):
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Credenciais inválidas")
+        # raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Credenciais inválidas")
+
+        raise HTTPException(
+                    status_code=status.HTTP_401_UNAUTHORIZED,
+                    detail = "Credenciais inválidas",
+                    headers = {"WWW-Authenticate": "Bearer"}
+                                       )
 
     token = create_access_token(data={"sub": user.username})
     return {"access_token": token, "token_type": "bearer"}
