@@ -1,153 +1,197 @@
-Tech Challenge 1 - API de Livros
+Tech Challenge 1 — API de Livros
 
-API pública para consulta e análise de livros, baseada em scraping de https://books.toscrape.com. Implementa autenticação JWT, endpoints ML-ready e monitoramento.
+Resumo
+API pública para consulta e análise de livros a partir de scraping do https://books.toscrape.com. Inclui autenticação JWT, endpoints prontos para ML, monitoramento (logs e métricas) e um pequeno dashboard. Este README segue boas práticas, define critérios claros e traz uma arquitetura técnica e de Git para facilitar colaboração.
 
-🔐 Desafio 1: API & Autenticação
+Índice
+- Visão Geral e Objetivos
+- Critérios e Boas Práticas
+- Requisitos
+- Instalação e Setup
+- Execução Local
+- Autenticação (JWT)
+- Documentação dos Endpoints
+- Arquitetura (Aplicação, Dados e Observabilidade)
+- Estratégia de Git (Arquitetura de Branches)
+- Padrões de Commits (Conventional Commits)
+- Contribuição (PRs e Revisões)
+- Testes
+- Deploy (Render)
+- Troubleshooting
+- Roadmap
 
-POST /api/v1/auth/login: Gera token de acesso (Bearer).
+Visão Geral e Objetivos
+- Fornecer uma API segura (JWT) para consulta e análise de livros raspados do Books to Scrape.
+- Expor dados para uso em Data Science/ML e um dashboard simples de visualização.
+- Oferecer observabilidade mínima (logs e métricas Prometheus) e uma estratégia de colaboração via Git.
 
-POST /api/v1/auth/refresh: Renova token de acesso.
+Critérios e Boas Práticas
+- Segurança: todos os endpoints sensíveis exigem Bearer Token; senhas com hash; JWT com expiração.
+- Confiabilidade: logs estruturados diários; health-check; métricas para Prometheus.
+- Qualidade: testes com Pytest; linters/formatadores (recomendado: black/ruff) — opcional.
+- Manutenibilidade: arquitetura modular, convenções de código e commits, documentação dos endpoints.
 
-POST /api/v1/scraping/trigger (Admin): Inicia scraping de novos dados (protegido).
+Requisitos
+- Python 3.11+
+- Poetry
+- SQLite (já embutido; DB local por padrão)
 
-🤖 Desafio 2: Pipeline ML-Ready
+Instalação e Setup
+1) Clonar o repositório
+   git clone https://github.com/IbniB/tech_challenge1.git
+   cd tech_challenge1
 
-GET /api/v1/ml/features: Retorna lista de features (price, rating, category, availability).
+2) Instalar dependências
+   poetry install
 
-GET /api/v1/ml/training-data: Dataset completo para treinamento (JSON).
+3) Configurar variáveis de ambiente (.env na raiz)
+   Exemplo de .env:
+   SECRET_KEY=troque-por-uma-chave-secreta
+   ALGORITHM=HS256
+   ACCESS_TOKEN_EXPIRE_MINUTES=30
+   ENVIRONMENT=development
+   DATABASE_URL=sqlite:///./tech_challenge1.db
+   DASHBOARD_USER=admin
+   DASHBOARD_PASSWORD=admin
 
-POST /api/v1/ml/predictions: Recebe JSON com features e retorna predição.
+Execução Local
+- Iniciar API (FastAPI/Uvicorn)
+  poetry run uvicorn tech_challenge1.api.main:app --reload
+  Swagger/OpenAPI: http://localhost:8000/docs
+  Health Check:     GET http://localhost:8000/api/v1/health
 
-📊 Desafio 3: Monitoramento & Analytics
+- Dashboard (opcional)
+  poetry run streamlit run tech_challenge1/scripts/dashboard.py
 
-Logs estruturados: Gravados em logs/app_YYYY-MM-DD.log, expostos em GET /api/v1/logs.
+- Popular CSV localmente (opção 1)
+  poetry run python -m tech_challenge1.scripts.scrape
+  (o script salva em api/data/livros.csv)
 
-Métricas Prometheus: Expostas em GET /api/v1/metrics.
+- Popular CSV via API (opção 2)
+  - Gere token (login) e chame POST /api/v1/scraping/trigger
+  - O arquivo será salvo em data/livros.csv (raiz); mova-o para api/data se for usar os endpoints Books imediatamente
 
-Dashboard Streamlit: Frontend simples para visualização de dados e métricas (scripts/dashboard.py).
+Autenticação (JWT)
+- Registro
+  POST /api/v1/auth/register
+  body (JSON): {"username": "user", "password": "pass"}
 
-🚀 Instalação & Setup
+- Login (OAuth2PasswordRequestForm)
+  POST /api/v1/auth/login
+  form-data: username, password
+  resposta: {"access_token": "...", "token_type": "bearer"}
+  Use o token como Authorization: Bearer <token>
 
-# Clonar o repositório
-git clone https://github.com/IbniB/tech_challenge1.git
-cd tech_challenge1
+Documentação dos Endpoints
+- Health
+  GET /api/v1/health — status geral (público)
 
-# Instalar dependências
-poetry install
+- Books (protegidos: requer Bearer)
+  GET /api/v1/books — lista todos os livros (lidos de api/data/livros.csv)
+  GET /api/v1/books/search?title=&category= — busca por título e/ou categoria
+  GET /api/v1/books/categories — lista categorias
+  GET /api/v1/books/{book_id} — detalhe por índice na lista
 
-# Configurar variáveis de ambiente
-cp .env.example .env  # ou crie .env manualmente
-# Ajuste SECRET_KEY, DATABASE_URL, DASHBOARD_USER e DASHBOARD_PASSWORD
+- Stats
+  GET /api/v1/stats/overview — visão geral (protegido: Bearer)
+  GET /api/v1/stats/categories — agregações por categoria (público)
+  GET /api/v1/stats/top-rated — top livros por rating (público)
+  GET /api/v1/stats/price-range?min=&max= — filtro por preço (público)
 
-⚙️ Executando Localmente
+- ML (protegidos: Bearer)
+  GET /api/v1/ml/features — [price, rating, category, availability]
+  GET /api/v1/ml/training-data — dados simulados para treino
+  POST /api/v1/ml/predictions — body: {price, rating, category, availability}
 
-# Iniciar API
-uvicorn tech_challenge1.api.main:app --reload
+- Scraping (protegido: Bearer)
+  POST /api/v1/scraping/trigger — dispara scraping em background; salva em data/livros.csv (raiz do projeto)
+  Observação importante: os endpoints Books leem api/data/livros.csv. Para popular api/data/livros.csv, use o script local abaixo ou mova o CSV gerado da raiz para api/data.
 
-# Acessar Swagger UI
-en http://localhost:8000/docs
+- Logs
+  GET /api/v1/logs/ — últimas 200 linhas do logs/app_YYYY-MM-DD.log
 
-# Executar Dashboard Streamlit
-poetry run streamlit run tech_challenge1/scripts/dashboard.py
+- Métricas Prometheus
+  GET /api/v1/metrics — endpoint exposto pelo instrumentator
 
-🗂 Estrutura do Projeto
+Arquitetura (Aplicação, Dados e Observabilidade)
+- Camadas
+  1) Scraping (scripts/scrape.py): coleta e parse com requests + BeautifulSoup.
+  2) Processamento: normalização e enriquecimento simples (ex.: coluna id, preço numérico em stats).
+  3) API (FastAPI): autenticação JWT, endpoints Books, ML, Stats, Logs, Metrics.
+  4) Consumo: Data Science, Dashboard, integrações externas.
 
-tech_challenge1/
-├── api/
-│   ├── routes/
-│   │   ├── auth.py
-│   │   ├── books.py
-│   │   ├── ml.py
-│   │   ├── stats.py
-│   │   ├── metrics.py
-│   │   └── logs.py
-│   └── main.py
-├── core/
-│   ├── settings.py
-│   └── security.py
-├── db/
-│   └── database.py
-├── models/
-│   └── book_model.py
-├── scripts/
-│   └── dashboard.py
-├── utils/
-│   └── logging.py
-├── tests/
-│   └── (Pytest files)
-├── data/
-│   └── (datasets)
-├── pyproject.toml
-├── README.md
-└── .env
+- Fluxo de dados (alto nível)
+  books.toscrape.com → scrape.py → data/livros.csv → API (Books/Stats/ML) → clientes (DS, Dashboard)
 
-🏗️ Arquitetura
+- Observabilidade
+  Logs: logs/app_YYYY-MM-DD.log (loguru), expostos via /api/v1/logs/
+  Métricas: Prometheus via /api/v1/metrics (latência, throughput, etc.)
 
-+-------------------+
-| Scraping (BS4)    |
-+-------------------+
-        ↓
-+-------------------+
-| Processamento     |
-| - Limpeza         |
-| - Feature Eng.    |
-+-------------------+
-        ↓
-+-------------------+
-| API FastAPI       |
-| - Auth            |
-| - Endpoints ML    |
-| - Trigger Admin   |
-+-------------------+
-        ↓
-+-------------------+
-| Consumo externo   |
-| - Data Scientist  |
-| - Dashboard       |
-+-------------------+
+Estratégia de Git (Arquitetura de Branches)
+- Branches
+  main: produção (estável)
+  develop: integração (próximo release)
+  feature/<nome-curto>: novas funcionalidades originadas de develop
+  fix/<issue-curto> ou hotfix/<id>: correções rápidas (hotfix a partir de main)
+  release/<versão>: estabilização antes de ir para main
 
-☁️ Deploy no Render
+- Fluxo
+  1) Crie branch a partir de develop (ou de main para hotfix).
+  2) Commits seguindo Conventional Commits (ver abaixo).
+  3) Abra Pull Request com descrição, checklist e link para issue.
+  4) Revisão e squash-merge em develop; releases são mescladas em main com tag.
 
-Crie um novo serviço Web no Render.
+Padrões de Commits (Conventional Commits)
+- Formato: tipo(escopo opcional): descrição
+  Exemplos:
+  - feat(auth): adicionar endpoint de registro
+  - fix(books): corrigir path do CSV
+  - docs(readme): atualizar instruções de deploy
+  - refactor(api): extrair middleware de logs
+  - test(stats): cobrir price-range com limites
 
-Use este arquivo render.yaml:
+- Tipos comuns: feat, fix, docs, style, refactor, perf, test, build, ci, chore, revert
 
-services:
-  - type: web
-    name: tech-challenge1-api
-    runtime: python
-    region: oregon
-    plan: free
+Contribuição (PRs e Revisões)
+- Antes de abrir PR:
+  - Rodar testes: poetry run pytest
+  - Garantir formatação/lint (sugestão): black, ruff
+  - Atualizar README quando necessário
+- Na PR:
+  - Descrever o problema/solução, screenshots (se aplicável)
+  - Checklist de testes locais e impacto
+  - Referenciar issues (ex.: Closes #123)
 
-    buildCommand: |
-      pip install poetry
-      poetry config virtualenvs.create false
-      poetry install --no-dev
+Testes
+- Executar
+  poetry run pytest
+- Estrutura
+  tests/ contém testes de saúde e pode ser expandido (unitários/integração)
 
-    startCommand: uvicorn tech_challenge1.api.main:app --host 0.0.0.0 --port 10000
+Deploy (Render)
+- Pré-requisitos: configurar variáveis de ambiente no painel do Render (mesmos nomes do .env).
+- Arquivo render.yaml (já incluso) define build/start. Resumo:
+  buildCommand:
+    pip install poetry
+    poetry config virtualenvs.create false
+    poetry install --no-dev
+  startCommand:
+    uvicorn tech_challenge1.api.main:app --host 0.0.0.0 --port 10000
+- Passos:
+  - Conecte o repositório ao Render
+  - Configure env vars (SECRET_KEY, ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES, DATABASE_URL, ENVIRONMENT, DASHBOARD_USER, DASHBOARD_PASSWORD)
+  - Faça push na branch principal que o Render monitora (ex.: main)
 
-    envVars:
-      - key: SECRET_KEY
-      - key: ALGORITHM
-      - key: ACCESS_TOKEN_EXPIRE_MINUTES
-      - key: DATABASE_URL
-      - key: ENVIRONMENT
-      - key: DASHBOARD_USER
-      - key: DASHBOARD_PASSWORD
+Troubleshooting
+- 401 Unauthorized nos endpoints: confirme envio de Authorization: Bearer <token> e que o token não expirou.
+- 404 livros.csv: rode POST /api/v1/scraping/trigger (com token) ou o script de scraping localmente.
+- Logs não encontrados: o endpoint /api/v1/logs/ lê o arquivo do dia; gere tráfego para criar o arquivo.
+- Métricas não aparecem: acesse /api/v1/metrics após ter feito chamadas na API.
+- Erros de env: verifique .env e nomes exigidos em tech_challenge1/core/settings.py.
 
-git push render main
-
-✅ Testes
-
-poetry run pytest
-
-🛠️ Próximos Passos
-
-Integrar frontend do Dashboard diretamente no Render ou hospedar separadamente.
-
-Aprimorar métricas com painel Prometheus/Grafana.
-
-Adicionar CI/CD para deploy automático.
-
-Expandir pipeline ML: fine-tuning, comparação de modelos.
+Roadmap
+- Integrar dashboard ao deploy
+- Painéis Prometheus/Grafana
+- CI/CD (GitHub Actions) com testes e lint
+- Expandir pipeline ML (feature store, avaliação de modelos)
 
