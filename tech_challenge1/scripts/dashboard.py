@@ -19,7 +19,7 @@ auth = requests.post(
 
 # DEBUG: mostre status e corpo da resposta
 st.write("🔐 Login status:", auth.status_code)
-st.write("📥 Login body  :", auth.text)
+# st.write("📥 Login body  :", auth.text) # Mostra Bearer no Dashboard
 
 # Pare aqui se deu erro
 if not auth.ok:

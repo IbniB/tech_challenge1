@@ -2,17 +2,24 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.openapi.utils import get_openapi
 
+import logging
+import time
+
 from tech_challenge1.api.routes import books, stats, ml, metrics
 from tech_challenge1.api.routes.auth import auth_router
 from tech_challenge1.api.routes.logs import router as logs_router
 from tech_challenge1.api.routes.scraping import router as scraping_router
 from tech_challenge1.db.database import Base, engine
-from tech_challenge1.utils.logging import logger
+from tech_challenge1.utils.logging import setup_logging
 from prometheus_fastapi_instrumentator import Instrumentator
+
+setup_logging()
+logger = logging.getLogger("app.requests")
+
 
 app = FastAPI(
     title="Tech Challenge - API de Livros",
-    version="1.0.0"
+    version="1.0.5"
 )
 
 Instrumentator().instrument(app).expose(
@@ -34,22 +41,36 @@ app.add_middleware(
 
 # Rotas existentes
 app.include_router(auth_router, prefix="/api/v1/auth", tags=["Auth"])
+app.include_router(scraping_router, prefix="/api/v1/scraping", tags=["Scraping"])
 app.include_router(books.router, prefix="/api/v1/books", tags=["Books"])
 app.include_router(stats.router, prefix="/api/v1/stats", tags=["Stats"])
 app.include_router(ml.router, prefix="/api/v1/ml", tags=["ML"])
 app.include_router(metrics.router, prefix="/api/v1/metrics", tags=["Metrics"])
 app.include_router(logs_router, prefix="/api/v1/logs", tags=["Logs"])
-app.include_router(scraping_router, prefix="/api/v1/scraping", tags=["Scraping"])
-
-
 
 
 @app.middleware("http")
 async def log_requests(request: Request, call_next):
-    logger.info(f"Requisição: {request.method} {request.url}")
-    response = await call_next(request)
-    logger.info(f"Resposta: {response.status_code}")
-    return response
+    start = time.perf_counter()
+    client_ip = getattr(request.client, "host", "-")
+    method = request.method
+    url = str(request.url)
+    try:
+        response = await call_next(request)
+        duration_ms = (time.perf_counter() - start) * 1000
+        logger.info(
+            "req=%s %s ip=%s status=%s dur_ms=%.2f",
+            method, url, client_ip, response.status_code, duration_ms
+        )
+        return response
+    except Exception as exc:  # loga exceções também
+        duration_ms = (time.perf_counter() - start) * 1000
+        logger.exception(
+            "req=%s %s ip=%s status=500 dur_ms=%.2f error=%s",
+            method, url, client_ip, duration_ms, str(exc)
+        )
+        raise
+
 
 
 def custom_openapi():

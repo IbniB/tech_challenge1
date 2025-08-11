@@ -71,6 +71,10 @@ Execução Local
   - Gere token (login) e chame POST /api/v1/scraping/trigger
   - O arquivo será salvo em data/livros.csv (raiz); mova-o para api/data se for usar os endpoints Books imediatamente
 
+Execução no Render
+- Docs Endpoint : https://tech-challenge1-api.onrender.com/docs#/
+- Dashboard: https://tech-challenge1-dashboard.onrender.com/
+
 Autenticação (JWT)
 - Registro
   POST /api/v1/auth/register
