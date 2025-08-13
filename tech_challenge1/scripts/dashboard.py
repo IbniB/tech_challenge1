@@ -77,9 +77,16 @@ with st.expander("🔎 Buscar Livros", expanded=True):
         params = {}
         if title:    params["title"]    = title
         if category: params["category"] = category
-        resp = requests.get(f"{API_BASE}/api/v1/books/search", params=params)
+        # ADICIONE headers=headers AQUI
+        resp = requests.get(
+            f"{API_BASE}/api/v1/books/search",
+            params=params,
+            headers=headers,
+            timeout=30,
+        )
         resp.raise_for_status()
         st.dataframe(resp.json())
+
 
 # 🤖 ML & Predição
 with st.expander("🤖 Dados de Treino ML"):
