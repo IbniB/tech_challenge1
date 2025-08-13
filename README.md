@@ -74,6 +74,7 @@ Execução Local
 Execução no Render
 - Docs Endpoint : https://tech-challenge1-api.onrender.com/docs#/
 - Dashboard: https://tech-challenge1-dashboard.onrender.com/
+- Login: **O login no dahsboard só ocorrerá se houver um usuário admin/admin. Por isso antes de executa-lo crie o usuário no /docs**
 
 Autenticação (JWT)
 - Registro

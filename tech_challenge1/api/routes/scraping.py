@@ -1,9 +1,8 @@
 from fastapi import APIRouter, Depends, BackgroundTasks, HTTPException
-from tech_challenge1.core.security import get_current_user
-from tech_challenge1.models.user import User
+from tech_challenge1.core.security import require_admin
 from tech_challenge1.scripts.scrape import scrape_all_books
+
 import pandas as pd
-import os
 from pathlib import Path
 
 router = APIRouter()
@@ -28,7 +27,7 @@ def write_csv(books_data: list[dict]) -> None:
 @router.post("/trigger")
 def trigger_scraping(
     background_tasks: BackgroundTasks,
-    current_user: User = Depends(get_current_user),
+    _: None = Depends(require_admin),
 ):
     """
     Dispara o scraping de livros em background e retorna imediatamente.

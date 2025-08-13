@@ -4,7 +4,13 @@ from sqlalchemy.orm import Session
 from pydantic import BaseModel
 from tech_challenge1.db.database import SessionLocal
 from tech_challenge1.models.user import User as DBUser
-from tech_challenge1.core.security import create_access_token, get_password_hash, verify_password
+from tech_challenge1.core.security import (
+    verify_password,
+    create_access_token,
+    get_current_user,
+    get_password_hash
+)
+
 
 auth_router = APIRouter()
 
@@ -50,4 +56,14 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depend
                                        )
 
     token = create_access_token(data={"sub": user.username})
+    return {"access_token": token, "token_type": "bearer"}
+
+
+@auth_router.post("/refresh")
+def refresh_token(current_user: DBUser = Depends(get_current_user)):
+    """
+    Emite um novo access token para o usuário autenticado.
+    Observação: este fluxo exige um token válido no header Authorization.
+    """
+    token = create_access_token(data={"sub": current_user.username})
     return {"access_token": token, "token_type": "bearer"}

@@ -8,6 +8,9 @@ from tech_challenge1.models.user import User
 from sqlalchemy.orm import Session
 from typing import Optional
 from tech_challenge1.core.settings import settings
+import os
+from typing import Set
+
 
 SECRET_KEY = settings.SECRET_KEY
 ALGORITHM = settings.ALGORITHM
@@ -59,3 +62,23 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
     if user is None:
         raise credentials_exception
     return user
+
+def _admin_users_from_env() -> Set[str]:
+    """
+    Lê a lista de usuários administradores da variável de ambiente ADMIN_USERS.
+    Ex.: ADMIN_USERS=admin,superuser
+    """
+    raw = os.getenv("ADMIN_USERS", "")
+    return {u.strip() for u in raw.split(",") if u.strip()}
+
+def require_admin(current_user = Depends(get_current_user)):
+    """
+    Permite acesso somente a usuários cujo username esteja em ADMIN_USERS.
+    """
+    admins = _admin_users_from_env()
+    if not getattr(current_user, "username", None) or current_user.username not in admins:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Acesso restrito a administradores."
+        )
+    return current_user
